@@ -16,6 +16,15 @@ import { Platform } from "react-native";
 
 import { useCallback, useEffect, useState } from "react";
 
+const DEFAULT_SAMPLE_RATE_HZ = 16000;
+
+const resolveSampleRateHz = () => {
+  const envSampleRate = Number(process.env.EXPO_PUBLIC_SAMPLE_RATE_HZ);
+  return Number.isFinite(envSampleRate) && envSampleRate > 0
+    ? envSampleRate
+    : DEFAULT_SAMPLE_RATE_HZ;
+};
+
 export default function App() {
   const [micPermission, requestMicPermission] = useMicrophonePermissions();
   console.log(micPermission);
@@ -41,6 +50,7 @@ export function Testbed() {
   const [inputVolumeLevel, setInputVolumeLevel] = useState(0.0);
   const [outputVolumeLevel, setOutputVolumeLevel] = useState(0.0);
   const micMode = Platform.OS === "ios" ? getMicrophoneModeIOS() : "NO_MIC_MODE_IN_ANDROID";
+  const sampleRateHz = resolveSampleRateHz();
 
   const playAudio = () => {
     for (const dataChunk of audioData) {
@@ -76,7 +86,7 @@ export function Testbed() {
   );
 
   useEffect(() => {
-    initialize().then(() => setAudioInitialized(true));
+    initialize({ sampleRate: sampleRateHz }).then(() => setAudioInitialized(true));
   }, []);
 
   const handleToggleMute = useCallback(() => {

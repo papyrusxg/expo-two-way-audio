@@ -2,11 +2,14 @@ import AVFoundation
 import Foundation
 
 class AudioEngine {
+    static let defaultSampleRateHz: Double = 16000
+
     private var avAudioEngine = AVAudioEngine()
     private var speechPlayer = AVAudioPlayerNode()
     private var engineConfigChangeObserver: Any?
     private var sessionInterruptionObserver: Any?
     private var mediaServicesResetObserver: Any?
+    private let sampleRateHz: Double
     
     public private(set) var voiceIOFormat: AVAudioFormat
     public private(set) var isRecording = false
@@ -32,13 +35,13 @@ class AudioEngine {
         case audioFormatError
     }
     
-    init() throws {
-        avAudioEngine.attach(speechPlayer)
-        
-        guard let format = AVAudioFormat(standardFormatWithSampleRate: 16000, channels: 1) else {
+    init(sampleRate: Double = AudioEngine.defaultSampleRateHz) throws {
+        sampleRateHz = sampleRate
+        guard let format = AVAudioFormat(standardFormatWithSampleRate: sampleRateHz, channels: 1) else {
             throw AudioEngineError.audioFormatError
         }
         voiceIOFormat = format
+        avAudioEngine.attach(speechPlayer)
         print("Voice IO format: \(String(describing: voiceIOFormat))")
         
         engineConfigChangeObserver = NotificationCenter.default.addObserver(
@@ -212,7 +215,7 @@ class AudioEngine {
         let frameCount = UInt32(data.count) / 2 // 16-bit input = 2 bytes per frame
         
         let format = AVAudioFormat(commonFormat: .pcmFormatFloat32,
-                                   sampleRate: 16000,
+                                   sampleRate: sampleRateHz,
                                    channels: 1,
                                    interleaved: false)!
         

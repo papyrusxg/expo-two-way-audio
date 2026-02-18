@@ -27,6 +27,15 @@ import { useSharedValue } from "react-native-reanimated";
 import { getFlowAPIJwt } from "./auth";
 import VolumeDisplay from "./volume-display";
 
+const DEFAULT_SAMPLE_RATE_HZ = 16000;
+
+const resolveSampleRateHz = () => {
+  const envSampleRate = Number(process.env.EXPO_PUBLIC_SAMPLE_RATE_HZ);
+  return Number.isFinite(envSampleRate) && envSampleRate > 0
+    ? envSampleRate
+    : DEFAULT_SAMPLE_RATE_HZ;
+};
+
 export default function App() {
   const [micPermission, requestMicPermission] = useMicrophonePermissions();
   console.log(micPermission);
@@ -57,13 +66,14 @@ export function FlowTest() {
   const [audioInitialized, setAudioInitialized] = useState(false);
   const inputVolumeLevel = useSharedValue(0.0);
   const outputVolumeLevel = useSharedValue(0.0);
+  const sampleRateHz = resolveSampleRateHz();
   const isRecording = useIsRecording();
   const { startConversation, endConversation, sendAudio } = useFlow();
 
   // Initialize Expo Two Way Audio
   useEffect(() => {
     const initializeAudio = async () => {
-      await initialize();
+      await initialize({ sampleRate: sampleRateHz });
       setAudioInitialized(true);
     };
 
@@ -169,7 +179,7 @@ export function FlowTest() {
           audioFormat: {
             type: "raw",
             encoding: "pcm_s16le", // this can also be set to 'pcm_f32le' for 32-bit Float
-            sample_rate: 16000,
+            sample_rate: sampleRateHz,
           },
         });
         setIsConnectedToFlow(true);

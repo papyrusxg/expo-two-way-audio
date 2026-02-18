@@ -1,5 +1,5 @@
 {
-  "name": "@speechmatics/expo-two-way-audio",
+  "name": "@papyrusxg/expo-two-way-audio",
   "version": "0.1.2",
   "description": "Native module for two way audio streaming",
   "main": "build/index.js",
@@ -18,14 +18,20 @@
     "open:ios": "xed examples/basic-usage/ios",
     "open:android": "open -a \"Android Studio\" examples/basic-usage/android"
   },
-  "keywords": ["react-native", "expo", "expo-two-way-audio", "ExpoTwoWayAudio"],
-  "repository": "https://github.com/speechmatics/expo-two-way-audio",
+  "keywords": [
+    "react-native",
+    "expo",
+    "expo-two-way-audio",
+    "ExpoTwoWayAudio",
+    "expo-base64-pcm-player"
+  ],
+  "repository": "https://github.com/papyrusxg/expo-two-way-audio",
   "bugs": {
-    "url": "https://github.com/speechmatics/expo-two-way-audio/issues"
+    "url": "https://github.com/papyrusxg/expo-two-way-audio/issues"
   },
-  "author": "Speechmatics <devrel@speechmatics.com> (https://github.com/speechmatics)",
+  "author": "papyrusxg <devrel@papyrusxg.com> (https://github.com/papyrusxg)",
   "license": "MIT",
-  "homepage": "https://github.com/speechmatics/expo-two-way-audio#readme",
+  "homepage": "https://github.com/papyrusxg/expo-two-way-audio#readme",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/react": "^18.0.25",

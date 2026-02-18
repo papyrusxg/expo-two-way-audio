@@ -6,6 +6,10 @@ let ON_OUTPUT_VOLUME_LEVEL_EVENT_NAME = "onOutputVolumeLevelData"
 let ON_RECORDING_CHANGE_EVENT_NAME = "onRecordingChange"
 let ON_AUDIO_INTERRUPTION_EVENT_NAME = "onAudioInterruption"
 
+private struct InitializeOptions: Record {
+    @Field var sampleRate: Double?
+}
+
 public class ExpoTwoWayAudioModule: Module {
     private var audioEngine: AudioEngine?
     public func definition() -> ModuleDefinition {
@@ -22,12 +26,14 @@ public class ExpoTwoWayAudioModule: Module {
 
         }
 
-        AsyncFunction("initialize") { () -> Bool in
+        AsyncFunction("initialize") { (options: InitializeOptions?) -> Bool in
+            let requestedSampleRate = options?.sampleRate ?? AudioEngine.defaultSampleRateHz
+            let sampleRate = requestedSampleRate > 0 ? requestedSampleRate : AudioEngine.defaultSampleRateHz
             do {
                 if self.audioEngine != nil {
                     return true
                 }
-                self.audioEngine = try AudioEngine()
+                self.audioEngine = try AudioEngine(sampleRate: sampleRate)
                 self.setupMicrophoneCallback()
                 self.setupInputAudioLevelCallback()
                 self.setupOutputAudioLevelCallback()

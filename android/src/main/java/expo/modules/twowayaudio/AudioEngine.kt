@@ -20,8 +20,14 @@ import java.util.concurrent.Executors
 import kotlin.math.pow
 
 
-class AudioEngine (context: Context) {
-    private val SAMPLE_RATE = 16000
+class AudioEngine(
+    context: Context,
+    private val sampleRateHz: Int = DEFAULT_SAMPLE_RATE_HZ
+) {
+    companion object {
+        const val DEFAULT_SAMPLE_RATE_HZ = 16000
+    }
+
     private val AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT
     private val CHANNEL_CONFIG = AudioFormat.CHANNEL_IN_MONO
 
@@ -74,7 +80,7 @@ class AudioEngine (context: Context) {
         }, null)
 
         val bufferSize = AudioTrack.getMinBufferSize(
-            SAMPLE_RATE,
+            sampleRateHz,
             AudioFormat.CHANNEL_OUT_MONO,
             AUDIO_FORMAT
         )
@@ -86,7 +92,7 @@ class AudioEngine (context: Context) {
                 .build(),
             AudioFormat.Builder()
                 .setEncoding(AUDIO_FORMAT)
-                .setSampleRate(SAMPLE_RATE)
+                .setSampleRate(sampleRateHz)
                 .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
                 .build(),
             bufferSize,
@@ -170,10 +176,10 @@ class AudioEngine (context: Context) {
     @RequiresApi(Build.VERSION_CODES.Q)
     @SuppressLint("MissingPermission")
     private fun startRecording(){
-        val bufferSize = AudioRecord.getMinBufferSize(SAMPLE_RATE, CHANNEL_CONFIG, AUDIO_FORMAT)
+        val bufferSize = AudioRecord.getMinBufferSize(sampleRateHz, CHANNEL_CONFIG, AUDIO_FORMAT)
         audioRecord = AudioRecord(
             MediaRecorder.AudioSource.VOICE_COMMUNICATION,
-            SAMPLE_RATE,
+            sampleRateHz,
             CHANNEL_CONFIG,
             AUDIO_FORMAT,
             bufferSize
